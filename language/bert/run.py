@@ -31,7 +31,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--backend",
-        choices=["tf", "pytorch", "onnxruntime", "tf_estimator", "ray"],
+        choices=["tf", "pytorch", "onnxruntime", "tf_estimator", "ray", "deepsparse"],
         default="tf",
         help="Backend",
     )
@@ -76,6 +76,8 @@ def get_args():
         default=None,
         help="Loadgen network mode",
     )
+    parser.add_argument("--model_path", type=str, default="zoo:nlp/question_answering/bert-large/pytorch/huggingface/squad/pruned80_quant-none-vnni",
+                        help="path to model")
     parser.add_argument("--node", type=str, default="")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument(
@@ -85,6 +87,8 @@ def get_args():
         help="Address of the server(s) under test.",
     )
 
+    parser.add_argument("--batch_size", type=int, default=1,
+                        help="batch_size")
     args = parser.parse_args()
     return args
 
@@ -100,6 +104,7 @@ scenario_map = {
 def main():
     args = get_args()
 
+<<<<<<< HEAD
     sut = None
 
     if not args.network or args.network == "sut":
@@ -147,6 +152,9 @@ def main():
             from ray_SUT import get_ray_sut
 
             sut = get_ray_sut(args)
+        elif args.backend == "deepsparse":
+            from deepsparse_SUT import get_deepsparse_sut
+            sut = get_deepsparse_sut(args)
         else:
             raise ValueError("Unknown backend: {:}".format(args.backend))
 
@@ -160,9 +168,11 @@ def main():
         settings.mode = lg.TestMode.AccuracyOnly
     else:
         settings.mode = lg.TestMode.PerformanceOnly
+
     log_path = os.environ.get("LOG_PATH")
     if not log_path:
         log_path = "build/logs"
+
     if not os.path.exists(log_path):
         os.makedirs(log_path)
     log_output_settings = lg.LogOutputSettings()
