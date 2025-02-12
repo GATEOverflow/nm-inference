@@ -103,22 +103,32 @@ class SQuAD_v1_QSL:
 
             for i in range(len(eval_features)):
                 # Trim all the zeros from the back aka padding
-                padded_input_ids = np.array(eval_features[i].input_ids).astype(np.int64)
-                padded_input_mask = np.array(eval_features[i].input_mask).astype(np.int64)
-                padded_segment_ids = np.array(eval_features[i].segment_ids).astype(np.int64)
+                padded_input_ids = np.array(
+                    eval_features[i].input_ids).astype(
+                    np.int64)
+                padded_input_mask = np.array(
+                    eval_features[i].input_mask).astype(
+                    np.int64)
+                padded_segment_ids = np.array(
+                    eval_features[i].segment_ids).astype(
+                    np.int64)
                 unpadded_input_ids = np.trim_zeros(padded_input_ids, 'b')
                 unpadded_input_mask = np.trim_zeros(padded_input_mask, 'b')
                 unpadded_segment_ids = np.trim_zeros(padded_segment_ids, 'b')
 
-                assert len(unpadded_input_ids) == len(unpadded_input_mask) == len(unpadded_segment_ids)
+                assert len(unpadded_input_ids) == len(
+                    unpadded_input_mask) == len(unpadded_segment_ids)
 
                 min_pad_length = find_min_length(unpadded_input_ids)
                 min_padding = min_pad_length - len(unpadded_input_ids)
 
                 eval_features[i].min_pad_length = min_pad_length
-                eval_features[i].unpadded_input_ids = np.pad(unpadded_input_ids, (0, min_padding))
-                eval_features[i].unpadded_input_mask = np.pad(unpadded_input_mask, (0, min_padding))
-                eval_features[i].unpadded_segment_ids = np.pad(unpadded_segment_ids, (0, min_padding))
+                eval_features[i].unpadded_input_ids = np.pad(
+                    unpadded_input_ids, (0, min_padding))
+                eval_features[i].unpadded_input_mask = np.pad(
+                    unpadded_input_mask, (0, min_padding))
+                eval_features[i].unpadded_segment_ids = np.pad(
+                    unpadded_segment_ids, (0, min_padding))
 
         self.eval_features = eval_features
         self.count = total_count_override or len(self.eval_features)
@@ -143,5 +153,8 @@ class SQuAD_v1_QSL:
     def __del__(self):
         print("Finished destroying QSL.")
 
-def get_squad_QSL(total_count_override=None, perf_count_override=None, unpadding_lengths=None):
-    return SQuAD_v1_QSL(total_count_override, perf_count_override, unpadding_lengths=unpadding_lengths)
+
+def get_squad_QSL(total_count_override=None,
+                  perf_count_override=None, unpadding_lengths=None):
+    return SQuAD_v1_QSL(total_count_override, perf_count_override,
+                        unpadding_lengths=unpadding_lengths)

@@ -31,7 +31,13 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--backend",
-        choices=["tf", "pytorch", "onnxruntime", "tf_estimator", "ray", "deepsparse"],
+        choices=[
+            "tf",
+            "pytorch",
+            "onnxruntime",
+            "tf_estimator",
+            "ray",
+            "deepsparse"],
         default="tf",
         help="Backend",
     )

@@ -489,26 +489,28 @@ class RunnerBase:
     def enqueue(self, query_samples):
         idx = [q.index for q in query_samples]
         query_id = [q.id for q in query_samples]
-<<<<<<< HEAD
+
+
+<< << << < HEAD
+   bs = self.max_batchsize
+    for i in range(0, len(idx), bs):
+        data, label = self.ds.get_samples(idx[i:i + bs])
+        self.run_one_item(Item(query_id[i:i + bs], idx[i:i + bs], data, label))
+== == == =
+
+   if len(query_samples) < self.max_batchsize:
+        data, label = self.ds.get_samples(idx)
+        self.run_one_item(Item(query_id, idx, data, label))
+    else:
         bs = self.max_batchsize
         for i in range(0, len(idx), bs):
-            data, label = self.ds.get_samples(idx[i:i+bs])
-            self.run_one_item(Item(query_id[i:i+bs], idx[i:i+bs], data, label))
-=======
+            data, label = self.ds.get_samples(idx[i: i + bs])
+            self.run_one_item(
+                Item(query_id[i: i + bs], idx[i: i + bs], data, label)
+            )
+>>>>>> > mlcommons-master
 
-        if len(query_samples) < self.max_batchsize:
-            data, label = self.ds.get_samples(idx)
-            self.run_one_item(Item(query_id, idx, data, label))
-        else:
-            bs = self.max_batchsize
-            for i in range(0, len(idx), bs):
-                data, label = self.ds.get_samples(idx[i: i + bs])
-                self.run_one_item(
-                    Item(query_id[i: i + bs], idx[i: i + bs], data, label)
-                )
->>>>>>> mlcommons-master
-
-    def finish(self):
+   def finish(self):
         pass
 
 
@@ -549,7 +551,7 @@ class QueueRunner(RunnerBase):
     def enqueue(self, query_samples):
         num_threads = int(os.getenv('ENQUEUE_NUM_THREADS', 2))
         n = max(1, len(query_samples) // num_threads)
-        query_sample_chunks = [query_samples[i:i+n] for i in range(0, len(query_samples), n)]
+        query_sample_chunks = [query_samples[i:i +n] for i in range(0, len(query_samples), n)]
 
         enqueue_threads = []
         for chunk in query_sample_chunks:
@@ -633,7 +635,10 @@ def main():
     # If DeepSparse pass batch size, num streams, and scenario
     if args.backend.startswith('deepsparse'):
         backend.max_batchsize = args.max_batchsize
-        backend.num_streams = int(os.getenv('DEEPSPARSE_NUM_STREAMS', args.threads // 4))
+        backend.num_streams = int(
+    os.getenv(
+        'DEEPSPARSE_NUM_STREAMS',
+         args.threads // 4))
         backend.scenario = args.scenario
 
     # override image format if given
