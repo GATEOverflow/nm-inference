@@ -491,26 +491,18 @@ class RunnerBase:
         query_id = [q.id for q in query_samples]
 
 
-<< << << < HEAD
-   bs = self.max_batchsize
-    for i in range(0, len(idx), bs):
-        data, label = self.ds.get_samples(idx[i:i + bs])
-        self.run_one_item(Item(query_id[i:i + bs], idx[i:i + bs], data, label))
-== == == =
+        if len(query_samples) < self.max_batchsize:
+            data, label = self.ds.get_samples(idx)
+            self.run_one_item(Item(query_id, idx, data, label))
+        else:
+            bs = self.max_batchsize
+            for i in range(0, len(idx), bs):
+                data, label = self.ds.get_samples(idx[i: i + bs])
+                self.run_one_item(
+                    Item(query_id[i: i + bs], idx[i: i + bs], data, label)
+                )
 
-   if len(query_samples) < self.max_batchsize:
-        data, label = self.ds.get_samples(idx)
-        self.run_one_item(Item(query_id, idx, data, label))
-    else:
-        bs = self.max_batchsize
-        for i in range(0, len(idx), bs):
-            data, label = self.ds.get_samples(idx[i: i + bs])
-            self.run_one_item(
-                Item(query_id[i: i + bs], idx[i: i + bs], data, label)
-            )
->>>>>> > mlcommons-master
-
-   def finish(self):
+    def finish(self):
         pass
 
 
